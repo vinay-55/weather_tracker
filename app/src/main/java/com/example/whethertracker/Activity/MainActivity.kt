@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
+
         }
     }
     private fun isNightNow():Boolean{
