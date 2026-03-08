@@ -13,7 +13,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.whethertracker.Adapter.ForecastAdapter
 import com.example.whethertracker.Model.CurrentResponseApi
+import com.example.whethertracker.Model.ForecastResponseApi
 import com.example.whethertracker.R
 import com.example.whethertracker.ViewModel.WeatherViewModel
 import com.example.whethertracker.databinding.ActivityMainBinding
@@ -29,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     val weatherViewModel: WeatherViewModel by viewModels()
     private val calendar by lazy { Calendar.getInstance() }
+    private val forecastAdapter by lazy { ForecastAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,60 +49,95 @@ class MainActivity : AppCompatActivity() {
             statusBarColor = Color.TRANSPARENT
         }
         binding.apply {
-            var lat =51.50
+            var lat = 51.50
             var lon = -0.12
             var name = "London"
             cityText.text = name
             progressBar.visibility = View.VISIBLE
-            weatherViewModel.loadCurrentWeather(lat,lon,"metric").enqueue(object :
-                retrofit2.Callback<CurrentResponseApi>{
-                    override fun onResponse(
-                        call: Call<CurrentResponseApi>,
-                        response: Response<CurrentResponseApi>
-                    ) {
-                        if(response.isSuccessful)
-                        {
-                            val data=response.body()
-                            progressBar.visibility=View.GONE
-                            detailLayout.visibility=View.VISIBLE
-                            data?.let{
-                                humidityTxt.text=it.main?.humidity?.toString()+"%"
-                                statusText.text = it.weather?.get(0)?.main ?: "-"
-                                windTxt.text=it.wind?.speed?.let{Math.round(it).toString()}+"Km"
-                                currentTempText.text=it.main?.temp?.let{Math.round(it).toString()}+"°"
-                                maxTempTxt.text=it.main?.tempMax?.let{Math.round(it).toString()}+"°"
-                                minTempTxt.text=it.main?.tempMin?.let{Math.round(it).toString()}+"°"
-                                val drawable=if(isNightNow()) R.drawable.night
-                                else{
-                                     setDynamicallyWallpapaer(it.weather?.get(0)?.icon?:"-")
-                                }
-                                bgimage.setImageResource(drawable)
+            weatherViewModel.loadCurrentWeather(lat, lon, "metric").enqueue(object :
+                retrofit2.Callback<CurrentResponseApi> {
+                override fun onResponse(
+                    call: Call<CurrentResponseApi>,
+                    response: Response<CurrentResponseApi>
+                ) {
+                    if (response.isSuccessful) {
+                        val data = response.body()
+                        progressBar.visibility = View.GONE
+                        detailLayout.visibility = View.VISIBLE
+                        data?.let {
+                            humidityTxt.text = it.main?.humidity?.toString() + "%"
+                            statusText.text = it.weather?.get(0)?.main ?: "-"
+                            windTxt.text = it.wind?.speed?.let { Math.round(it).toString() } + "Km"
+                            currentTempText.text =
+                                it.main?.temp?.let { Math.round(it).toString() } + "°"
+                            maxTempTxt.text =
+                                it.main?.tempMax?.let { Math.round(it).toString() } + "°"
+                            minTempTxt.text =
+                                it.main?.tempMin?.let { Math.round(it).toString() } + "°"
+                            val drawable = if (isNightNow()) R.drawable.night
+                            else {
+                                setDynamicallyWallpapaer(it.weather?.get(0)?.icon ?: "-")
+                            }
+                            bgimage.setImageResource(drawable)
 
+                        }
+
+                    }
+                }
+
+                override fun onFailure(call: Call<CurrentResponseApi?>, t: Throwable) {
+                    Toast.makeText(this@MainActivity, t.toString(), Toast.LENGTH_SHORT).show()
+                }
+            })
+            weatherViewModel.loadForecastWeather(lat, lon, "metric")
+                .enqueue(object : retrofit2.Callback<ForecastResponseApi> {
+                    override fun onResponse(
+                        call: Call<ForecastResponseApi?>,
+                        response: Response<ForecastResponseApi?>
+                    ) {
+                        if (response.isSuccessful) {
+                            val data = response.body()
+                            blueView.visibility = View.VISIBLE
+                            data?.let {
+                                forecastAdapter.differ.submitList(it.list)
+                                forecastView.apply {
+                                    layoutManager = LinearLayoutManager(
+                                        this@MainActivity,
+                                        LinearLayoutManager.HORIZONTAL, false
+                                    )
+                                    adapter = forecastAdapter
+
+                                }
                             }
 
                         }
                     }
 
-                override fun onFailure(call: Call<CurrentResponseApi?>, t: Throwable) {
-                    Toast.makeText(this@MainActivity,t.toString(),Toast.LENGTH_SHORT).show()
-                }
-            })
+                    override fun onFailure(
+                        call: Call<ForecastResponseApi?>,
+                        t: Throwable
+                    ) {
 
+                    }
 
+                })
         }
-    }
-    private fun isNightNow():Boolean{
-        return calendar.get(Calendar.HOUR_OF_DAY)>=18
 
     }
-    private fun setDynamicallyWallpapaer(icon:String):Int{
-        return when(icon.dropLast(1)){
+
+    private fun isNightNow(): Boolean {
+        return calendar.get(Calendar.HOUR_OF_DAY) >= 18
+
+    }
+
+    private fun setDynamicallyWallpapaer(icon: String): Int {
+        return when (icon.dropLast(1)) {
             "01" -> R.drawable.sunny
-            "02","03","04" -> R.drawable.cloudy
-            "09","10","11" -> R.drawable.rainy
+            "02", "03", "04" -> R.drawable.cloudy
+            "09", "10", "11" -> R.drawable.rainy
             "13" -> R.drawable.snow
             "50" -> R.drawable.haze
             else -> R.drawable.sunny
         }
     }
-    }
+}

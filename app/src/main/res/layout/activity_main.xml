@@ -253,7 +253,7 @@
         android:layout_marginBottom="32dp"
         android:background="@drawable/forecast_bg"
 
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/bgimage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

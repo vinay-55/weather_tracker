@@ -29,7 +29,7 @@ class ForecastAdapter: RecyclerView.Adapter<ForecastAdapter.ViewHolder> (){
         val date= SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(differ.currentList[position].dtTxt.toString())
         val calendar= Calendar.getInstance()
         calendar.time=date
-        val dayOfWeekName=when(Calendar.DAY_OF_WEEK){
+        val dayOfWeekName=when(calendar.get(Calendar.DAY_OF_WEEK)){
             1 -> "Sun"
             2 -> "Mon"
             3 -> "Tue"
@@ -45,17 +45,17 @@ class ForecastAdapter: RecyclerView.Adapter<ForecastAdapter.ViewHolder> (){
         val hour12=calendar.get(Calendar.HOUR)
         binding.hourText.text=hour12.toString()+amPm
         binding.tempText.text=differ.currentList[position].main?.temp?.let{Math.round(it)}.toString()+"°"
-        val icon=when(differ.currentList[position].weather?.get(0)?.toString()){
-            "01d","0n"->"sunny"
-            "02d","02n"->"cloudy_sunny"
-            "03d","03n"->"cloudy_sunny"
-            "04d","04n"->"cloudy"
-            "09d","09n"->"rainy"
-            "10d","10n"->"rainy"
-            "11d","11n"->"storm"
-            "13d","13n"->"snowy"
-            "50d","50n"->"windy"
-             else->"sunny"
+        val icon=when(differ.currentList[position].weather?.get(0)?.icon){
+            "01d","01n"->"sunny_symbol"
+            "02d","02n"->"cloud_sunny"
+            "03d","03n"->"cloud_sunny"
+            "04d","04n"->"cloudy_symbol"
+            "09d","09n"->"rainy_symbol"
+            "10d","10n"->"rainy_symbol"
+            "11d","11n"->"storm_symbol"
+            "13d","13n"->"snow_symbol"
+            "50d","50n"->"wind_symbol"
+             else->"sunny_symbol"
         }
         val drawableResourceId:Int=binding.root.resources.getIdentifier(
             icon,
