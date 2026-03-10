@@ -1,5 +1,6 @@
 package com.example.whethertracker.Server
 
+import com.example.whethertracker.Model.CityResponseApi
 import com.example.whethertracker.Model.CurrentResponseApi
 import com.example.whethertracker.Model.ForecastResponseApi
 import retrofit2.Call
@@ -21,4 +22,11 @@ interface ApiServices {
         @Query("units") units:String,
         @Query("appid") Apikey:String
     ): Call<ForecastResponseApi>
+    @GET("geo/1.0/direct")
+    fun getCitiesList(
+        @Query("q") q:String,
+        @Query("limit") limit:Int,
+        @Query("appid") Apikey:String
+    ): Call<CityResponseApi.CityResponseApiItem>
+
 }
