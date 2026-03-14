@@ -1,21 +1,110 @@
 package com.example.whethertracker.Activity
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.View
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.whethertracker.Adapter.CityAdapter
+import com.example.whethertracker.Model.CityResponseApi
 import com.example.whethertracker.R
+import com.example.whethertracker.ViewModel.CityViewModel
+import com.example.whethertracker.databinding.ActivityCityListBinding
+import com.example.whethertracker.databinding.CityViewholderBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CityListActivity : AppCompatActivity() {
+    lateinit var binding: ActivityCityListBinding
+    private val cityAdapter by lazy{ CityAdapter() }
+    private val cityViewModel: CityViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_city_list)
+        binding= ActivityCityListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+        window.apply {
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            statusBarColor = Color.TRANSPARENT
+        }
+        binding.apply {
+            binding.cityEdit.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    binding.progressBar2.visibility = View.VISIBLE
+                    cityViewModel.loadCitiesList(s.toString(), 10)
+                        .enqueue(object : Callback<CityResponseApi.CityResponseApiItem> {
+                            override fun onResponse(
+                                call: Call<CityResponseApi.CityResponseApiItem?>,
+                                response: Response<CityResponseApi.CityResponseApiItem?>
+                            ) {
+                                if (response.isSuccessful) {
+                                    val data = response.body()
+                                    data?.let {
+                                        binding.progressBar2.visibility = View.GONE
+                                        cityAdapter.differ.submitList(it as List<CityResponseApi.CityResponseApiItem?>?)
+                                        binding.cityView.apply {
+                                            layoutManager = LinearLayoutManager(
+                                                this@CityListActivity,
+                                                LinearLayoutManager.HORIZONTAL, false
+                                            )
+                                            adapter = cityAdapter
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            override fun onFailure(
+                                call: Call<CityResponseApi.CityResponseApiItem?>,
+                                t: Throwable
+                            ) {
+                                binding.progressBar2.visibility=View.GONE
+                                Log.d("API_ERROR",t.message.toString())
+                                Toast.makeText(this@CityListActivity,
+                                    "API failed: ${t.message}",
+                                    Toast.LENGTH_SHORT).show()
+                            }
+
+                        })
+
+
+                }
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                }
+
+            })
         }
     }
 }
