@@ -27,6 +27,6 @@ interface ApiServices {
         @Query("q") q:String,
         @Query("limit") limit:Int,
         @Query("appid") Apikey:String
-    ): Call<CityResponseApi.CityResponseApiItem>
+    ): Call<CityResponseApi>
 
 }

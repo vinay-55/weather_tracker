@@ -48,16 +48,16 @@ class CityListActivity : AppCompatActivity() {
                 override fun afterTextChanged(s: Editable?) {
                     binding.progressBar2.visibility = View.VISIBLE
                     cityViewModel.loadCitiesList(s.toString(), 10)
-                        .enqueue(object : Callback<CityResponseApi.CityResponseApiItem> {
+                        .enqueue(object : Callback<CityResponseApi> {
                             override fun onResponse(
-                                call: Call<CityResponseApi.CityResponseApiItem?>,
-                                response: Response<CityResponseApi.CityResponseApiItem?>
+                                call: Call<CityResponseApi>,
+                                response: Response<CityResponseApi>
                             ) {
                                 if (response.isSuccessful) {
                                     val data = response.body()
                                     data?.let {
                                         binding.progressBar2.visibility = View.GONE
-                                        cityAdapter.differ.submitList(it as List<CityResponseApi.CityResponseApiItem?>?)
+                                        cityAdapter.differ.submitList(it)
                                         binding.cityView.apply {
                                             layoutManager = LinearLayoutManager(
                                                 this@CityListActivity,
@@ -71,7 +71,7 @@ class CityListActivity : AppCompatActivity() {
                             }
 
                             override fun onFailure(
-                                call: Call<CityResponseApi.CityResponseApiItem?>,
+                                call: Call<CityResponseApi>,
                                 t: Throwable
                             ) {
                                 binding.progressBar2.visibility=View.GONE
