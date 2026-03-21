@@ -27,6 +27,7 @@
         android:inputType="text"
         android:minHeight="48dp"
         android:padding="8dp"
+        android:textColor="@color/black"
         android:textColorHint="@color/black"
         android:textSize="12sp" />
 
