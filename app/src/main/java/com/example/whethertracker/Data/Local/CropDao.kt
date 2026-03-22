@@ -1,0 +1,13 @@
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+
+@Dao
+interface CropDao {
+
+    @Insert
+    suspend fun insertCrop(crop: Crop)
+
+    @Query("SELECT * FROM crops")
+    suspend fun getAllCrops(): List<Crop>
+}
