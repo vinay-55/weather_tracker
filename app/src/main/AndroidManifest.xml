@@ -15,6 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WhetherTracker">
         <activity
+            android:name=".Activity.FarmerActivity"/>
+        <activity
+            android:name=".Activity.FarmerMenuActivity" />
+        <activity
             android:name=".Activity.CityListActivity"
             android:exported="false" />
         <activity

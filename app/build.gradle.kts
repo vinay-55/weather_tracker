@@ -70,10 +70,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:5.0.5")
 // Activity KTX
     implementation("androidx.activity:activity-ktx:1.12.4")
-//room
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+//gemini
 
 
 }

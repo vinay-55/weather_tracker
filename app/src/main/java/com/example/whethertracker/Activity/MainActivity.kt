@@ -1,11 +1,12 @@
 package com.example.whethertracker.Activity
 
 
+
 import android.content.Intent
 import android.graphics.Color
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.util.Log
+
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -14,15 +15,19 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.whethertracker.Adapter.ForecastAdapter
 import com.example.whethertracker.Model.CurrentResponseApi
 import com.example.whethertracker.Model.ForecastResponseApi
 import com.example.whethertracker.R
+
 import com.example.whethertracker.ViewModel.WeatherViewModel
 import com.example.whethertracker.databinding.ActivityMainBinding
 
+
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import kotlin.getValue
 
@@ -49,6 +54,8 @@ class MainActivity : AppCompatActivity() {
             addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             statusBarColor = Color.TRANSPARENT
         }
+
+
         binding.apply {
             var lat=intent.getDoubleExtra("lat",0.00)
             var lon=intent.getDoubleExtra("lon",0.00)
@@ -58,13 +65,17 @@ class MainActivity : AppCompatActivity() {
                 lon = -0.12
                 name = "London"
             }
+            binding.imgFarmer.setOnClickListener {
+                val intent = Intent(this@MainActivity, FarmerActivity::class.java)
+                startActivity(intent)
+            }
             addCity.setOnClickListener {
                 startActivity(Intent(this@MainActivity, CityListActivity::class.java))
             }
             cityText.text = name
             progressBar.visibility = View.VISIBLE
             weatherViewModel.loadCurrentWeather(lat, lon, "metric").enqueue(object :
-                retrofit2.Callback<CurrentResponseApi> {
+                Callback<CurrentResponseApi> {
                 override fun onResponse(
                     call: Call<CurrentResponseApi>,
                     response: Response<CurrentResponseApi>
@@ -99,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 }
             })
             weatherViewModel.loadForecastWeather(lat, lon, "metric")
-                .enqueue(object : retrofit2.Callback<ForecastResponseApi> {
+                .enqueue(object : Callback<ForecastResponseApi> {
                     override fun onResponse(
                         call: Call<ForecastResponseApi?>,
                         response: Response<ForecastResponseApi?>
