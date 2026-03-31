@@ -19,12 +19,10 @@ class FarmerMenuActivity : AppCompatActivity() {
             val crop = binding.etCrop.text.toString()
             val soil = binding.etSoil.text.toString()
 
-            val intent = Intent()
+            val intent = Intent(this, FarmerActivity::class.java)
             intent.putExtra("crop", crop)
             intent.putExtra("soil", soil)
-
-            setResult(RESULT_OK, intent)
-            finish()
+            startActivity(intent)
         }
     }
 }
