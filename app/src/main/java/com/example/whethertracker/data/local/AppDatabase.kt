@@ -6,12 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [Crop::class],
+    entities = [Crop::class,Chat::class,Message::class],
     version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun cropDao(): CropDao
+    abstract fun chatDao(): ChatDao
+    abstract fun messageDao(): MessageDao
 
     companion object {
         @Volatile

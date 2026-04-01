@@ -77,7 +77,7 @@ dependencies {
         implementation("androidx.room:room-ktx:2.7.0")
     //firebase
     implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
-    implementation("com.google.firebase:firebase-auth-ktx")
+
 implementation("com.google.firebase:firebase-auth")
 
 }
