@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.whethertracker.Activity.MainActivity
+import com.example.whethertracker.Activity.WeatherActivity
 import com.example.whethertracker.Model.CityResponseApi
 import com.example.whethertracker.Model.ForecastResponseApi
 import com.example.whethertracker.databinding.CityViewholderBinding
@@ -33,7 +34,7 @@ class CityAdapter: RecyclerView.Adapter<CityAdapter.ViewHolder> (){
         val binding= CityViewholderBinding.bind(holder.itemView)
         binding.cityTxt.text=differ.currentList[position].name
         binding.root.setOnClickListener {
-            val intent=Intent(binding.root.context, MainActivity::class.java)
+            val intent=Intent(binding.root.context, WeatherActivity::class.java)
             intent.putExtra("lat",differ.currentList[position].lat)
             intent.putExtra("lon",differ.currentList[position].lon)
             intent.putExtra("name",differ.currentList[position].name)

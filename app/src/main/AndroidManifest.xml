@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WhetherTracker">
         <activity
+            android:name=".Activity.WeatherActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ChatListActivity"
             android:exported="false" />
         <activity

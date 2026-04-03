@@ -29,19 +29,45 @@ class FarmerMenuActivity : AppCompatActivity() {
         binding.btnChats.setOnClickListener {
             startActivity(Intent(this, ChatListActivity::class.java))
         }
+        binding.btnWeather.setOnClickListener {
+            val intent=Intent(this, WeatherActivity::class.java)
+            startActivity(intent)
+        }
+        binding.btnProfile.setOnClickListener {
+
+            val user = FirebaseAuth.getInstance().currentUser
+
+            if (user == null) {
+                // Not logged in → go to login
+                startActivity(Intent(this, LoginActivity::class.java))
+            } else {
+                // Logged in → logout
+                FirebaseAuth.getInstance().signOut()
+                Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+        }
         binding.btnCreate.setOnClickListener {
 
-            val crop = binding.etCrop.text.toString()
-            val soil = binding.etSoil.text.toString()
+            val crop = binding.etCrop.text.toString().trim().lowercase()
+            val soil = binding.etSoil.text.toString().trim().lowercase()
+            val user = FirebaseAuth.getInstance().currentUser
+
+            if (user == null) {
+                Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, LoginActivity::class.java))
+                return@setOnClickListener
+            }
+
+            val userId = user.uid
 
             if (crop.isEmpty() || soil.isEmpty()) {
                 Toast.makeText(this, "Enter all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            val userId = FirebaseAuth.getInstance().currentUser?.uid
-                ?: return@setOnClickListener
-
+            Toast.makeText(this, "Project created open chats", Toast.LENGTH_SHORT).show()
             val db = AppDatabase.getDatabase(this)
             val repository = ChatRepository(db.chatDao())
 
@@ -58,10 +84,10 @@ class FarmerMenuActivity : AppCompatActivity() {
                 Log.d("CHAT_DEBUG", "Inserted chat: $crop")
 
                 // 🔥 AFTER insert → navigate
-                val intent = Intent(this@FarmerMenuActivity, FarmerActivity::class.java)
+               /* val intent = Intent(this@FarmerMenuActivity, FarmerActivity::class.java)
                 intent.putExtra("crop", crop)
                 intent.putExtra("soil", soil)
-                startActivity(intent)
+                startActivity(intent)*/
             }
         }
     }

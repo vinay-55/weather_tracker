@@ -61,7 +61,7 @@ class CityListActivity : AppCompatActivity() {
                                         binding.cityView.apply {
                                             layoutManager = LinearLayoutManager(
                                                 this@CityListActivity,
-                                                LinearLayoutManager.HORIZONTAL, false
+                                                LinearLayoutManager.VERTICAL, false
                                             )
                                             adapter = cityAdapter
                                         }

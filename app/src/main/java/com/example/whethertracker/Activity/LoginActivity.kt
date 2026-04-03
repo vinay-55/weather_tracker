@@ -56,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
 
                     // 👉 Move to Main Screen
-                    startActivity(Intent(this, FarmerActivity::class.java))
+                    startActivity(Intent(this, FarmerMenuActivity::class.java))
                     finish()
                 } else {
                     Toast.makeText(this, "Login Failed: ${it.exception?.message}", Toast.LENGTH_LONG).show()

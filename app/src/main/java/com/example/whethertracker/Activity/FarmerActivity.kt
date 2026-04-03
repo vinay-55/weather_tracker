@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.whethertracker.Model.GeminiViewModelFactory
+import com.example.whethertracker.ViewModel.GeminiViewModelFactory
 import com.example.whethertracker.Model.Project
 import com.example.whethertracker.Repository.ChatRepository
 import com.example.whethertracker.Repository.CropRepository
@@ -24,7 +24,10 @@ import com.example.whethertracker.data.local.AppDatabase
 import com.example.whethertracker.data.local.Chat
 import com.example.whethertracker.data.local.Crop
 import com.example.whethertracker.data.local.Message
+import com.example.whethertracker.data.seed.CropSeeder
 import com.example.whethertracker.databinding.ActivityFarmerBinding
+import com.example.whethertracker.utils.ChatHelper
+import com.example.whethertracker.utils.ChatResponseBuilder
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import kotlin.jvm.java
@@ -115,18 +118,7 @@ class FarmerActivity : AppCompatActivity() {
         val cropViewModel = ViewModelProvider(this, cropFactory)[CropViewModel::class.java]
 
         lifecycleScope.launch {
-            cropViewModel.insertIfNotExist(
-                Crop(
-                    name = "tomato",
-                    cropType = "vegetable",
-                    growthDays = 90,
-                    soilTypes = "loamy",
-                    waterNeed = "moderate",
-                    sunlight = "full sun",
-                    minTemp = 18,
-                    maxTemp = 30,
-                    plantSpacingCm = "45cm"
-                )
+            CropSeeder.seed(cropViewModel
             )
         }
 
@@ -181,7 +173,9 @@ class FarmerActivity : AppCompatActivity() {
                     val crop = cropViewModel.getCropByName(project.crop)
 
                     if (crop != null) {
-                        val response = "Crop: ${crop.name}, Soil: ${crop.soilTypes}, Water: ${crop.waterNeed}"
+                        val intent = ChatHelper.detectIntent(input)
+
+                        val response = ChatResponseBuilder.buildResponse(intent,input,crop)
                         viewModel.addBotMessage(response)
                         lifecycleScope.launch {
                             messageRepository.insert(
@@ -273,7 +267,4 @@ class FarmerActivity : AppCompatActivity() {
             binding.scrollView.fullScroll(View.FOCUS_DOWN)
         }
     }
-
-
-
 }
